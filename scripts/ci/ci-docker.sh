@@ -60,9 +60,10 @@ docker buildx build \
 	-f "${CI_DOCKERFILE}" \
 	--push \
 	-t "${COMMIT_IMAGE_REF}" \
-	-t "${BRANCH_IMAGE_REF}"echo "✅ Successfully built docker image!"
+	-t "${BRANCH_IMAGE_REF}"
 # --cache-from "type=registry,name=${CACHED_IMAGE_REF}" \
 # --cache-to "type=registry,name=${CACHED_IMAGE_REF}" \
+echo "✅ Successfully built docker image!"
 
 # build & push latest
 if [ "$BRANCH" = "main" ]; then
