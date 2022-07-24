@@ -45,17 +45,12 @@ IMAGE_VERSION="${BRANCH}-${SHA}"
 COMMIT_IMAGE_REF="${IMAGE_ID}:${IMAGE_VERSION}"
 BRANCH_IMAGE_REF="${IMAGE_ID}:${BRANCH}"
 LATEST_IMAGE_REF="${IMAGE_ID}:latest"
-
-COMMIT_CACHE_IMAGE_REF="${COMMIT_IMAGE_REF}-cache"
-BRANCH_CACHE_IMAGE_REF="${BRANCH_IMAGE_REF}-cache"
-LATEST_CACHE_IMAGE_REF="${LATEST_IMAGE_REF}-cache"
+CACHED_IMAGE_REF="${IMAGE_ID}:cached"
 
 echo "✅ Commit Image Ref: ${COMMIT_IMAGE_REF}"
 echo "✅ Branch Image Ref: ${BRANCH_IMAGE_REF}"
 echo "✅ Latest Image Ref: ${LATEST_IMAGE_REF}"
-
-echo "✅ Branch Cache Image Ref: ${BRANCH_CACHE_IMAGE_REF}"
-echo "✅ Latest Cache Image Ref: ${LATEST_CACHE_IMAGE_REF}"
+echo "✅ Cached Image Ref: ${CACHED_IMAGE_REF}"
 
 # build image
 echo "🔨 Building Docker image..."
@@ -63,10 +58,8 @@ docker buildx build \
 	--platform=linux/amd64,linux/arm64 "${CI_DOCKER_CONTEXT}" \
 	-f "${CI_DOCKERFILE}" \
 	--output type=image,name="${COMMIT_CACHE_IMAGE_REF}" \
-	--cache-to type=registry,mode=max,"ref=${BRANCH_CACHE_IMAGE_REF}" \
-	--cache-to type=registry,mode=max,"ref=${LATEST_CACHE_IMAGE_REF}" \
-	--cache-from type=registry,"ref=${BRANCH_CACHE_IMAGE_REF}" \
-	--cache-from type=registry,"ref=${LATEST_CACHE_IMAGE_REF}"
+	--cache-to type=registry,mode=max,"ref=${CACHED_IMAGE_REF}" \
+	--cache-from type=registry,"ref=${CACHED_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
 # push commit image
