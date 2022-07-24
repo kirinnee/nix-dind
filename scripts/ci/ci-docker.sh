@@ -52,30 +52,34 @@ echo "✅ Branch Image Ref: ${BRANCH_IMAGE_REF}"
 echo "✅ Latest Image Ref: ${LATEST_IMAGE_REF}"
 echo "✅ Cached Image Ref: ${CACHED_IMAGE_REF}"
 
-# build image
-echo "🔨 Building Docker image..."
+# build & push commit image
+echo "🔨 Build and Push commit-versioned Docker image..."
 docker buildx build \
 	"${CI_DOCKER_CONTEXT}" \
 	--platform=linux/amd64,linux/arm64 \
 	-f "${CI_DOCKERFILE}" \
-	--output="type=image,name=${COMMIT_IMAGE_REF}"
+	--push \
+	-t "${COMMIT_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
-# push commit image
-echo "🔨 Push commit-versioned Docker image..."
-docker push "${COMMIT_IMAGE_REF}"
-echo "✅ Pushed commit-versioned Docker image!"
-
-# push branch image
-echo "🔨 Push branch-versioned Docker image..."
-docker tag "${COMMIT_IMAGE_REF}" "${BRANCH_IMAGE_REF}"
-docker push "${BRANCH_IMAGE_REF}"
+# build & push commit image
+echo "🔨 Build and Push branch-versioned Docker image..."
+docker buildx build \
+	"${CI_DOCKER_CONTEXT}" \
+	--platform=linux/amd64,linux/arm64 \
+	-f "${CI_DOCKERFILE}" \
+	--push \
+	-t "${BRANCH_IMAGE_REF}"
 echo "✅ Pushed branch-versioned Docker image!"
 
-# push latest
+# build & push latest
 if [ "$BRANCH" = "main" ]; then
 	echo "🔎 Detected branch is 'main', pushing latest image..."
-	docker tag "${COMMIT_IMAGE_REF}" "${LATEST_IMAGE_REF}"
-	docker push "${LATEST_IMAGE_REF}"
+	docker buildx build \
+		"${CI_DOCKER_CONTEXT}" \
+		--platform=linux/amd64,linux/arm64 \
+		-f "${CI_DOCKERFILE}" \
+		--push \
+		-t "${LATEST_IMAGE_REF}"
 	echo "✅ Pushed latest Docker image!"
 fi
