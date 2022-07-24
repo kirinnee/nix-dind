@@ -28,7 +28,7 @@ trap onExit EXIT
 
 # Login to GitHub Registry
 echo "🔐 Logging into docker registry..."
-echo "${DOCKER_PASSWORD}" | docker login docker.pkg.github.com -u "${DOCKER_USER}" --password-stdin
+echo "${DOCKER_PASSWORD}" | docker login "${DOMAIN}" -u "${DOCKER_USER}" --password-stdin
 echo "✅ Successfully logged into docker registry!"
 
 echo "📝 Generating Image tags..."
