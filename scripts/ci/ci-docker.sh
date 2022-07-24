@@ -54,21 +54,8 @@ echo "✅ Commit Image Ref: ${COMMIT_IMAGE_REF}"
 echo "✅ Branch Image Ref: ${BRANCH_IMAGE_REF}"
 echo "✅ Latest Image Ref: ${LATEST_IMAGE_REF}"
 
-echo "✅ Commit Cache Image Ref: ${COMMIT_CACHE_IMAGE_REF}"
 echo "✅ Branch Cache Image Ref: ${BRANCH_CACHE_IMAGE_REF}"
 echo "✅ Latest Cache Image Ref: ${LATEST_CACHE_IMAGE_REF}"
-
-echo "🧬 Generating ref targets..."
-EXPORT_REFS="${COMMIT_CACHE_IMAGE_REF},${BRANCH_CACHE_IMAGE_REF}"
-IMPORT_REFS="${COMMIT_CACHE_IMAGE_REF},${BRANCH_CACHE_IMAGE_REF},${LATEST_CACHE_IMAGE_REF}"
-# push latest
-if [ "$BRANCH" = "main" ]; then
-	echo "🔎 Detected branch is 'main', appending ref targets..."
-	EXPORT_REFS="${EXPORT_REFS},${LATEST_CACHE_IMAGE_REF}"
-fi
-
-echo "✅ Export Ref targets generated: '${EXPORT_REFS}'"
-echo "✅ Import Ref targets generated: '${IMPORT_REFS}'"
 
 # build image
 echo "🔨 Building Docker image..."
@@ -76,8 +63,10 @@ docker buildx build \
 	--platform=linux/amd64,linux/arm64 "${CI_DOCKER_CONTEXT}" \
 	-f "${CI_DOCKERFILE}" \
 	--output type=image,name="${COMMIT_CACHE_IMAGE_REF}" \
-	--cache-to type=registry,mode=max,"ref=${EXPORT_REFS}" \
-	--cache-from type=registry,"ref=${EXPORT_REFS}"
+	--cache-to type=registry,mode=max,"ref=${BRANCH_CACHE_IMAGE_REF}" \
+	--cache-to type=registry,mode=max,"ref=${LATEST_CACHE_IMAGE_REF}" \
+	--cache-from type=registry,"ref=${BRANCH_CACHE_IMAGE_REF}" \
+	--cache-from type=registry,"ref=${LATEST_CACHE_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
 # push commit image
