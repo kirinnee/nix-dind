@@ -55,11 +55,12 @@ echo "✅ Cached Image Ref: ${CACHED_IMAGE_REF}"
 # build image
 echo "🔨 Building Docker image..."
 docker buildx build \
-	--platform=linux/amd64,linux/arm64 "${CI_DOCKER_CONTEXT}" \
+	"${CI_DOCKER_CONTEXT}" \
+	--platform=linux/amd64,linux/arm64 \
 	-f "${CI_DOCKERFILE}" \
-	--output type=image,name="${COMMIT_IMAGE_REF}" \
-	--cache-to type=registry,mode=max,"ref=${CACHED_IMAGE_REF}" \
-	--cache-from type=registry,"ref=${CACHED_IMAGE_REF}"
+	--output="type=image,name=${COMMIT_IMAGE_REF}" \
+	--cache-to="type=registry,ref=${CACHED_IMAGE_REF}" \
+	--cache-from="type=registry,ref=${CACHED_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
 # push commit image
