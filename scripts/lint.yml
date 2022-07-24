@@ -1,0 +1,15 @@
+version: "3"
+
+tasks:
+  php:
+    desc: Lints PHP files
+    cmds:
+      - phpstan --memory-limit=4G
+  docker:
+    desc: Lints Docker files
+    cmds:
+      - find . -name "Dockerfile" -not \( -path "*/vendor/*" -prune \) -exec hadolint {} +
+  sh:
+    desc: Lints shell scripts
+    cmds:
+      - shfmt -f . | xargs shellcheck

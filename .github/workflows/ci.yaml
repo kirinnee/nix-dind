@@ -1,0 +1,40 @@
+name: Continuous Integration
+
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - image-name: nix-dind
+            dockerfile: Dockerfile
+            context: .
+    env:
+      STRAT_DOCKER_IMAGE: ${{ matrix.image-name }}
+      STRAT_DOCKERFILE: ${{ matrix.dockerfile }}
+      STRAT_DOCKER_CONTEXT: ${{ matrix.context }}
+
+    steps:
+      - name: Checkout Git
+        uses: actions/checkout@v2.3.4
+
+      - name: Inject Github Variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - id: buildpush
+        name: Build and Push Docker
+        run: ./scripts/ci/ci-docker.sh
+        env:
+          CI_DOCKER_IMAGE: ${{ env.STRAT_DOCKER_IMAGE }}
+          CI_DOCKER_CONTEXT: ${{ env.STRAT_DOCKER_CONTEXT }}
+          CI_DOCKERFILE: ${{ env.STRAT_DOCKERFILE }}
+
+          DOMAIN: docker.pkg.github.com
+          GITHUB_REPO_REF: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_BRANCH: ${{ env.GITHUB_REF_SLUG }}
+
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USER: ${{ github.actor }}
