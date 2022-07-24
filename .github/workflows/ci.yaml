@@ -38,7 +38,7 @@ jobs:
           CI_DOCKER_CONTEXT: ${{ env.STRAT_DOCKER_CONTEXT }}
           CI_DOCKERFILE: ${{ env.STRAT_DOCKERFILE }}
 
-          DOMAIN: docker.pkg.github.com
+          DOMAIN: ghcr.io
           GITHUB_REPO_REF: ${{ github.repository }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BRANCH: ${{ env.GITHUB_REF_SLUG }}
