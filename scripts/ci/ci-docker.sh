@@ -59,18 +59,11 @@ docker buildx build \
 	--platform=linux/amd64,linux/arm64 \
 	-f "${CI_DOCKERFILE}" \
 	--push \
-	-t "${COMMIT_IMAGE_REF}"
-echo "✅ Successfully built docker image!"
-
-# build & push commit image
-echo "🔨 Build and Push branch-versioned Docker image..."
-docker buildx build \
-	"${CI_DOCKER_CONTEXT}" \
-	--platform=linux/amd64,linux/arm64 \
-	-f "${CI_DOCKERFILE}" \
-	--push \
+	--cache-from "type=registry,name=${CACHED_IMAGE_REF}" \
+	--cache-to "type=registry,name=${CACHED_IMAGE_REF}" \
+	-t "${COMMIT_IMAGE_REF}" \
 	-t "${BRANCH_IMAGE_REF}"
-echo "✅ Pushed branch-versioned Docker image!"
+echo "✅ Successfully built docker image!"
 
 # build & push latest
 if [ "$BRANCH" = "main" ]; then
