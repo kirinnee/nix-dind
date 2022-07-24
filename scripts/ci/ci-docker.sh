@@ -78,8 +78,8 @@ echo "🔨 Building and pushing Docker image..."
 docker buildx build \
 	--platform=linux/amd64,linux/arm64 "${CI_DOCKER_CONTEXT}" \
 	-f "${CI_DOCKERFILE}" \
-	--output type=image,"name=${PUSH_REFS}",push=true \
-	--cache-to type=registry,mode=max,"ref=${EXPORT_REFS}" \
-	--cache-from type=registry,"ref=${EXPORT_REFS}"
+	--output type=image,"name=${PUSH_REFS}",push=true
+# --cache-to type=registry,mode=max,"ref=${EXPORT_REFS}" \
+# --cache-from type=registry,"ref=${EXPORT_REFS}"
 
 echo "✅ Successfully built and push docker image!"
