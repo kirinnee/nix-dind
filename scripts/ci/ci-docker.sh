@@ -54,9 +54,10 @@ echo "✅ Cache Image Ref:  ${CACHE_IMAGE_REF}"
 
 # pull cache and tag it as cache
 echo "⏬ Pulling past images as cache..."
-docker pull "${BRANCH_IMAGE_REF}" || docker pull "${LATEST_IMAGE_REF}" || true
-docker tag "${BRANCH_IMAGE_REF}" "${CACHE_IMAGE_REF}" || docker tag "${LATEST_IMAGE_REF}" "${CACHE_IMAGE_REF}" || true
-if [ "${CACHE_IMAGE_REF}" = "" ]; then
+have_cache="1"
+docker pull "${BRANCH_IMAGE_REF}" || docker pull "${LATEST_IMAGE_REF}" || have_cache="0"
+docker tag "${BRANCH_IMAGE_REF}" "${CACHE_IMAGE_REF}" || docker tag "${LATEST_IMAGE_REF}" "${CACHE_IMAGE_REF}" || have_cache="0"
+if [ "${have_cache}" = '0' ]; then
 	echo "✅ℹ️ No cache image found!"
 else
 	echo "✅ Cache image found, ref: '${CACHE_IMAGE_REF}'"
