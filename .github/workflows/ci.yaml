@@ -23,6 +23,13 @@ jobs:
       - name: Inject Github Variables
         uses: rlespinasse/github-slug-action@v3.x
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
       - id: buildpush
         name: Build and Push Docker
         run: ./scripts/ci/ci-docker.sh

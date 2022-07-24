@@ -65,7 +65,7 @@ fi
 
 # build image
 echo "🔨 Building Dockerfile..."
-docker build --platform=linux/amd64 --platform=linux/arm64 "${CI_DOCKER_CONTEXT}" -f "${CI_DOCKERFILE}" --tag "${CI_DOCKER_IMAGE}" --cache-from="${CACHE_IMAGE_REF}"
+docker buildx build --platform=linux/amd64,linux/arm/v7 "${CI_DOCKER_CONTEXT}" -f "${CI_DOCKERFILE}" --tag "${CI_DOCKER_IMAGE}" --cache-from="${CACHE_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
 # push commit version
