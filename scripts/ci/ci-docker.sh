@@ -57,24 +57,24 @@ echo "🔨 Building Docker image..."
 docker buildx build \
 	--platform=linux/amd64,linux/arm64 "${CI_DOCKER_CONTEXT}" \
 	-f "${CI_DOCKERFILE}" \
-	--output type=image,name="${COMMIT_CACHE_IMAGE_REF}" \
+	--output type=image,name="${COMMIT_IMAGE_REF}" \
 	--cache-to type=registry,mode=max,"ref=${CACHED_IMAGE_REF}" \
 	--cache-from type=registry,"ref=${CACHED_IMAGE_REF}"
 echo "✅ Successfully built docker image!"
 
 # push commit image
 echo "🔨 Push commit-versioned Docker image..."
-docker push "${COMMIT_CACHE_IMAGE_REF}"
+docker push "${COMMIT_IMAGE_REF}"
 echo "✅ Pushed commit-versioned Docker image!"
 
 # push branch image
 echo "🔨 Push branch-versioned Docker image..."
-docker push "${COMMIT_CACHE_IMAGE_REF}"
+docker push "${BRANCH_IMAGE_REF}"
 echo "✅ Pushed branch-versioned Docker image!"
 
 # push latest
 if [ "$BRANCH" = "main" ]; then
 	echo "🔎 Detected branch is 'main', pushing latest image..."
-	docker push "${COMMIT_CACHE_IMAGE_REF}"
+	docker push "${LATEST_IMAGE_REF}"
 	echo "✅ Pushed latest Docker image!"
 fi
